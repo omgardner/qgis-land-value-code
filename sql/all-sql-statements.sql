@@ -104,3 +104,21 @@ DROP TABLE IF EXISTS
 -- remove the latest raw data table
 DROP TABLE IF EXISTS
 	`showcase-presentation.fullscale_dataset.land_data_latest_raw`;
+CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.suburb_aggregated_data` AS (
+    SELECT
+        ld.SUBURB_NAME, 
+        lv.DATE_MONTH, 
+        AVG(lv.LAND_VALUE) as avg_land_value,
+        COUNT(ld.PROPERTY_ID) as property_count
+    FROM 
+        `showcase-presentation.fullscale_dataset.land_data_raw` AS ld
+    INNER JOIN
+        `showcase-presentation.fullscale_dataset.land_values` AS lv
+        ON lv.PROPERTY_ID = ld.PROPERTY_ID
+    GROUP BY
+        ld.SUBURB_NAME, lv.DATE_MONTH
+    ORDER BY 
+        avg_land_value DESC, 
+        lv.DATE_MONTH ASC, 
+        ld.SUBURB_NAME DESC
+);

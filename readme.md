@@ -3,6 +3,27 @@
 
 ![gif-display](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/QGIS-yoy-change-land-value.gif)
 > YoY land value percentage change across NSW, Australia. Some suburbs change in tandem, some are outliers. 
+```sql
+CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.suburb_aggregated_data` AS (
+    SELECT
+        ld.SUBURB_NAME, 
+        lv.DATE_MONTH, 
+        AVG(lv.LAND_VALUE) as avg_land_value,
+        COUNT(ld.PROPERTY_ID) as property_count
+    FROM 
+        `showcase-presentation.fullscale_dataset.land_data_raw` AS ld
+    INNER JOIN
+        `showcase-presentation.fullscale_dataset.land_values` AS lv
+        ON lv.PROPERTY_ID = ld.PROPERTY_ID
+    GROUP BY
+        ld.SUBURB_NAME, lv.DATE_MONTH
+    ORDER BY 
+        avg_land_value DESC, 
+        lv.DATE_MONTH ASC, 
+        ld.SUBURB_NAME DESC
+);
+```
+> BigQuery query used as the data source for this animation
 
 ![networkx-suburb-postcode-nolabels](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/suburb-postcode-nolabels-network.png)
 > networkx diagram showing a subset of the unique pairs of suburb_name, postcode. It demonstrates that there's actually a m:n relationship going on.
