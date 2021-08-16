@@ -43,7 +43,7 @@ CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.street_name_agg
 ![big-data](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/image-20210609101859073.png)
 > Before I realised that the source was duplicating data, the 12 .zip files uncompressed + BQ denormalisation created this crazy 8.14GB table.
 
-### PROs and CONs of BQ
+### PROs and CONs of BigQuery
 #### PROs
 - no keys
     - my data had duplicate property IDs.
@@ -58,4 +58,4 @@ CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.street_name_agg
     - as such it is suboptimal for data cleaning
 - couldn't automatically delete a tmp table / view
 - can't import from a zip file containing .csv files
-    - this is why I needed to unzip in the Cloud Console
+    - this is why I needed to unzip in the Cloud Shell
