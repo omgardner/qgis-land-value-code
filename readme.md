@@ -8,7 +8,7 @@
 > networkx diagram showing a subset of the unique pairs of suburb_name, postcode. It demonstrates that there's actually a m:n relationship going on.
 
 ![networkx-suburb-postcode](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/suburb-postcode-network.png)
-> Same as above, but with lables.
+> Same as above, but with labels.
 
 ![qlik-poc-v2](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/qlik-dash.png)
 > QlikSense Dashboard proof of concept
