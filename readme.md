@@ -23,7 +23,7 @@ CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.suburb_aggregat
         ld.SUBURB_NAME DESC
 );
 ```
-> BigQuery query used as the data source for this animation
+> BigQuery query is then exported, processed in a Jupyter Notebook, then the result is used as the data source for this visual above
 
 ![networkx-suburb-postcode-nolabels](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/suburb-postcode-nolabels-network.png)
 > networkx diagram showing a subset of the unique pairs of suburb_name, postcode. It demonstrates that there's actually a m:n relationship going on.
