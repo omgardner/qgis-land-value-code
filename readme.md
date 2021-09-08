@@ -3,6 +3,10 @@
 
 ![gif-display](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/QGIS-yoy-change-land-value.gif)
 > YoY land value percentage change across NSW, Australia. Some suburbs change in tandem, some are outliers. 
+![gif-display](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/data-pipeline.png)
+
+> The data pipeline to get the data from it's raw source state into the various visualisations.
+
 ```sql
 CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.suburb_aggregated_data` AS (
     SELECT
