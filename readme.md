@@ -5,7 +5,7 @@
 > YoY land value percentage change across NSW, Australia. Some suburbs change in tandem, some are outliers. 
 
 
-![gif-display](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/data-pipeline.png)
+![gif-display](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/final-data-pipeline.png)
 
 
 
