@@ -11,6 +11,33 @@
 
 > The data pipeline to get the data from it's raw source state into the various visualisations.
 
+
+```bash
+for filepath in $(ls ~/land-value-data/*.zip)
+do
+	echo "Processing ${filepath}"
+	if unzip $filepath -d ~/land-value-data/ ; then
+		echo "${filepath} unzip success!"
+		if gsutil -m cp ~/land-value-data/*.csv gs://super-bucket-man/land-value-data ; then
+			echo "CSVs copied successfully! Deleting files."
+            rm -f ~/land-value-data/*.csv
+			rm -f $filepath
+		else
+			echo "CSVs copy failed.
+		fi
+	else
+		echo "unzip failed. try again for file: ${filepath}"
+	fi
+	
+	echo "remaining files:"
+	ls ~/land-value-data/*.zip
+done
+
+```
+
+> The shell script used to unzip and transfer the raw data from the cloud shell to the cloud bucket. It extracts and deletes each .ZIP file sequentially in order to stay under the  cloud shell's 5GB storage limit.
+
+
 ```sql
 CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.suburb_aggregated_data` AS (
     SELECT
@@ -31,7 +58,7 @@ CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.suburb_aggregat
         ld.SUBURB_NAME DESC
 );
 ```
-> BigQuery query is then exported, processed in a Jupyter Notebook, then the result is used as the data source for this visual above
+> BigQuery query is then exported, processed in a Jupyter Notebook, then the result is used as the data source for the map above.
 
 ![networkx-suburb-postcode-nolabels](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/suburb-postcode-nolabels-network.png)
 > networkx diagram showing a subset of the unique pairs of suburb_name, postcode. It demonstrates that there's actually a m:n relationship going on.
