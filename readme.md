@@ -3,10 +3,10 @@
 
 ![gif-display](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/QGIS-yoy-change-land-value.gif)
 > YoY land value percentage change across NSW, Australia. Some suburbs change in tandem, some are outliers. 
+![legend](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/image35.png)
+> legend for .GIF
 
-
-![gif-display](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/final-data-pipeline.png)
-
+![data-pipeline](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/final-data-pipeline.png)
 
 
 > The data pipeline to get the data from it's raw source state into the various visualisations.
@@ -98,6 +98,9 @@ CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.street_name_agg
 
 ![big-data](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/image-20210609101859073.png)
 > Before I realised that the source was duplicating data, the 12 .zip files uncompressed + BQ denormalisation created this crazy 8.14GB table.
+### OSM Street data
+![osm](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/image42-1.png)
+
 
 ### PROs and CONs of BigQuery
 #### PROs
