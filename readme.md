@@ -2,9 +2,9 @@
 > Included here are some code snippets from my project.
 
 ![gif-display](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/QGIS-yoy-change-land-value.gif)
-> YoY land value percentage change across NSW, Australia. Some suburbs change in tandem, some are outliers. 
 ![legend](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/image35.png)
-> legend for .GIF
+> YoY land value percentage change across NSW, Australia. Some suburbs change in tandem, some are outliers. 
+
 
 ![data-pipeline](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/final-data-pipeline.png)
 
