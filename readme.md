@@ -1,17 +1,15 @@
-# About
-> Included here are some code snippets from my project.
+# QGIS Land Value Visualisation
+## About the project
+I utilised open data from the NSW government to show how land value per suburb had changed year-over-year (YoY). 
 
 ![gif-display](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/QGIS-yoy-change-land-value.gif)
-![legend](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/image35.png)
-> YoY land value percentage change across NSW, Australia. Some suburbs change in tandem, some are outliers. 
+> a blue suburb indicates that the land-value *increased* since the prior year, red indicates a *decrease* and white indicates that there was little or no change.
 
+The geospatial GIF was created in QGIS, and the data was sourced from the NSW Land Valuer General
 
+### Data Pipeline
 ![data-pipeline](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/final-data-pipeline.png)
-
-
-> The data pipeline to get the data from it's raw source state into the various visualisations.
-
-
+Below are some scripts that were used as part of the pipeline.
 ```bash
 for filepath in $(ls ~/land-value-data/*.zip)
 do
@@ -32,12 +30,10 @@ do
 	echo "remaining files:"
 	ls ~/land-value-data/*.zip
 done
-
 ```
+The data given by the NSW land valuer general was multiple .ZIP files each containing multiple .CSVs. The script extracts and deletes each .ZIP file sequentially in order to stay under the cloud shell's 5GB storage limit.
 
-> The shell script used to unzip and transfer the raw data from the cloud shell to the cloud bucket. It extracts and deletes each .ZIP file sequentially in order to stay under the  cloud shell's 5GB storage limit.
-
-
+After loading the csv files into BigQuery, the data gets cleaned and reduced down the relevant columns.
 ```sql
 CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.suburb_aggregated_data` AS (
     SELECT
@@ -58,63 +54,45 @@ CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.suburb_aggregat
         ld.SUBURB_NAME DESC
 );
 ```
-> BigQuery query is then exported, processed in a Jupyter Notebook, then the result is used as the data source for the map above.
+> the results of this query get manually exported, and can be seen in [this file](https://github.com/omgardner/qgis-land-value-code/blob/master/data/results-suburb-aggregated-data.csv)
 
+## Interesting Experiments done during the process to better understand the data
+### networkx diagrams depicting how a postcode relates to suburb names
+The code used can be found in [this jupyter notebook](https://github.com/omgardner/qgis-land-value-code/blob/master/notebooks/networkx-suburb-postcode-relationship.ipynb)
 ![networkx-suburb-postcode-nolabels](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/suburb-postcode-nolabels-network.png)
-> networkx diagram showing a subset of the unique pairs of suburb_name, postcode. It demonstrates that there's actually a m:n relationship going on.
+> green = suburb name, red = postcode
+
+What was intriguing was that you couldn't use either of them as a unique identifier. They had a many to many relationship. Looking back on the project this was probably a flaw in the source data, because while a postcode can belong to many suburbs, a suburb name should be unique.
 
 ![networkx-suburb-postcode](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/suburb-postcode-network.png)
-> Same as above, but with labels.
+> the same network graph but with text per node
 
+### BI Dashboard Test
+At the time I was interested in Qlik as a BI tool, so I took the chance to throw some data into a dashboard.
 ![qlik-poc-v2](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/qlik-dash.png)
 > QlikSense Dashboard proof of concept
 
-```sql
-CREATE OR REPLACE TABLE `showcase-presentation.fullscale_dataset.street_name_agg_table` AS (
-    SELECT
-    -- inefficient way of retrieving the higher level granularities for the STREET_NAME
-        MIN(ld.DISTRICT_NAME) AS DISTRICT_NAME, 
-        MIN(ld.SUBURB_NAME) AS SUBURB_NAME, 
-        MIN(ld.POSTCODE) AS POSTCODE, 
-        ld.STREET_NAME, 
-        -- gets first element from an array of structs, 
-        --   then gets the string value corresponding to the "value" key
-        APPROX_TOP_COUNT(ld.ZONE_CODE, 1)[OFFSET(0)].value AS most_frequent_zone_code,
-        AVG(lv.LAND_VALUE) AS avg_land_value,
-        AVG(ld.AREA_M2) AS avg_area_m2
-    FROM 
-        `showcase-presentation.fullscale_dataset.land_details_latest` AS ld
-    INNER JOIN 
-        `showcase-presentation.fullscale_dataset.land_values` AS lv ON lv.PROPERTY_ID = ld.PROPERTY_ID
-    WHERE 
-        ld.STREET_NAME IS NOT NULL
-    GROUP BY 
-        ld.STREET_NAME
-    ORDER BY
-        avg_land_value DESC
-) 
-```
-> BigQuery Query used to make the above QlikSense PoC
+It was a good way to learn more about BI tools at the time. 
 
-![big-data](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/image-20210609101859073.png)
-> Before I realised that the source was duplicating data, the 12 .zip files uncompressed + BQ denormalisation created this crazy 8.14GB table.
 ### OSM Street data
+The initial plan was to visualise land value change year-over-year per street. Instead of coloring suburbs it would have colored each street. However aggregating by street proved to be infeasable. 
+But I did manage to import the OpenStreetMap data into QGIS, and explored how different kinds of roads and pathways were represented.
 ![osm](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/image42-1.png)
 
-
-### PROs and CONs of BigQuery
-#### PROs
+## PROs and CONs of BigQuery
+I explored the PROs and CONs of BigQuery.
+### PROs
 - no keys
-    - my data had duplicate property IDs.
+    - my data had duplicate property IDs, so I it allowed me to not worry
 - RECORD datatypes: ARRAYs and STRUCTs
     - interesting way to denormalise data whereas regular SQL would have been incapable
 - easy to setup databases
     - schema gets inferred. In my case this was desirable
 - first TB of queries is free
 - data is stored internally by column, so queries will only process the columns that are necessary for the query versus the whole table
-#### CONs
+### CONs
 - append only
-    - as such it is suboptimal for data cleaning
-- couldn't automatically delete a tmp table / view
+    - as such it is bad for data cleaning
+- couldn't automatically delete a temporary table / view
 - can't import from a zip file containing .csv files
     - this is why I needed to unzip in the Cloud Shell
