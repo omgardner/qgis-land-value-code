@@ -62,7 +62,7 @@ The code used can be found in [this jupyter notebook](https://github.com/omgardn
 ![networkx-suburb-postcode-nolabels](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/suburb-postcode-nolabels-network.png)
 > green = suburb name, red = postcode
 
-What was intriguing was that you couldn't use either of them as a unique identifier. They had a many to many relationship. Looking back on the project this was probably a flaw in the source data, because while a postcode can belong to many suburbs, a suburb name should be unique.
+What was intriguing was that you couldn't use either of them as a unique identifier. They had a many to many relationship. Looking back on the project this was probably a flaw in either the source data or my data cleaning process. While a postcode can belong to many suburbs, a suburb name should be unique.
 
 ![networkx-suburb-postcode](https://raw.githubusercontent.com/omgardner/qgis-land-value-code/master/images/suburb-postcode-network.png)
 > the same network graph but with text per node
